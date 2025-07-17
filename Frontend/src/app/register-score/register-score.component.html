@@ -1,0 +1,15 @@
+<form (ngSubmit)="save()">
+  <label>Jogador:</label>
+  <select [(ngModel)]="newScore.playerId" name="player" required>
+    <option value="" disabled selected>Selecione</option>
+    <option *ngFor="let player of players" [value]="player.id">{{ player.playerName }}</option>
+  </select>
+
+  <label>Data da Partida:</label>
+  <input type="date" [(ngModel)]="newScore.date" name="date" required />
+
+  <label>Pontuação:</label>
+  <input type="number" [(ngModel)]="newScore.score" name="score" required />
+
+  <button type="submit">Registrar</button>
+</form>

@@ -1,0 +1,55 @@
+/* app.component.css */
+html, body {
+  height: 100%; /* garante que o corpo ocupe a tela toda */
+  margin: 0;
+} 
+
+h1 {
+  color: #d6336c; /* rosa forte */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+nav {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+nav button {
+  background-color: #f8bbd0; /* rosa claro */
+  border: 2px solid #d6336c; /* borda rosa forte */
+  color: #d6336c;
+  font-weight: bold;
+  padding: 10px 20px;
+  margin: 0 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+  font-size: 16px;
+    border-radius: 142px;
+}
+
+nav button:hover {
+  background-color: #d6336c;
+  color: white;
+  border-color: #a5274b;
+    border-radius: 142px;
+}
+
+nav button:focus {
+  outline: none;
+  box-shadow: 0 0 5px 2px #d6336c;
+}
+
+body {
+  background-color: #fff0f6; /* fundo bem clarinho rosa */
+  margin: 40px;
+}
+
+.container {
+ height: 100vh;
+  display: flex;
+  justify-content: center; 
+  align-items: center;
+}

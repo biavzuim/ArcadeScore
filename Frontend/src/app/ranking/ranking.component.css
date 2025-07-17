@@ -1,0 +1,39 @@
+:host {
+  display: block;
+  max-width: 600px;
+  margin: 20px auto;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
+  background-color: #fff0f6; /* tom rosa claro */
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 10px rgba(255, 105, 180, 0.3);
+}
+
+h2 {
+  text-align: center;
+  color: #d6336c; /* rosa forte */
+  margin-bottom: 20px;
+}
+
+ul.scores-list, ul.players-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 20px 0;
+}
+
+ul.scores-list li, ul.players-list li {
+  padding: 8px 12px;
+  border-bottom: 1px solid #f8bbd0;
+  display: flex;
+  justify-content: space-between;
+  font-weight: 500;
+}
+
+ul.scores-list li:last-child, ul.players-list li:last-child {
+  border-bottom: none;
+}
+
+strong {
+  color: #d6336c;
+}

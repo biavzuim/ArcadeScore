@@ -1,0 +1,110 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #fff;
+}
+
+/* Título */
+h2 {
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  color: #222;
+}
+
+/* Seção de adicionar jogador */
+.add-player-container {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  width: 100%;
+  max-width: 500px;
+  justify-content: center;
+}
+
+.add-player-container input[type="text"] {
+  flex: 1;
+  padding: 12px;
+  font-size: 16px;
+  border: 2px solid #ff8ab0;
+  border-radius: 10px;
+  outline: none;
+  border-radius: 142px;
+}
+
+.add-player-container button {
+  padding: 12px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+  background-color: #ff8ab0;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  border-radius: 142px;
+}
+
+.add-player-container button:hover {
+  background-color: #ff6393;
+  border-radius: 142px;
+}
+
+/* Lista de jogadores */
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  max-width: 500px;
+}
+
+li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #fff0f5;
+  border: 1px solid #ff8ab0;
+  border-radius: 142px;
+  padding: 14px 20px;
+  margin-bottom: 12px;
+  font-size: 1rem;
+}
+
+/* Nome do jogador */
+li a {
+  text-decoration: none;
+  color: #c2185b;
+  font-weight: 600;
+}
+
+/* Botão de remover */
+li button {
+  background-color: #ff8ab0;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  width: 52px;
+  height: 32px;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  margin-left: 20px;}
+
+li button:hover {
+  background-color: #ff4f88;
+}
+
+/* Área de pontuação do jogador */
+div[ngIf] {
+  margin-top: 2rem;
+  background-color: #ffe0eb;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  border: 1px solid #ffb6c1;
+  text-align: center;
+  max-width: 500px;
+}

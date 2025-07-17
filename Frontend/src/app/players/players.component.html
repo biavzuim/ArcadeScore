@@ -1,0 +1,25 @@
+<h2>Lista de Jogadores</h2>
+<div class="add-player-container">
+  <input type="text" [(ngModel)]="newPlayerName" placeholder="Novo jogador" />
+  <button (click)="addPlayer()">Adicionar</button>
+</div>
+
+<div *ngIf="selectedPlayer">
+  <h3>{{ selectedPlayer.playerName }}</h3>
+  <p>Pontuação Total: {{ totalScore }}</p>
+</div>
+
+<ul>
+  <li *ngFor="let player of players">
+    <a href="#" (click)="selectPlayer(player); $event.preventDefault()">
+      {{ player.playerName }}
+    </a>
+    <!-- Conditional rendering based on confirmingPlayer -->
+    <div class="confirm-box" *ngIf="confirmingPlayer?.id === player.id">
+      <p>Tem certeza que deseja excluir?</p>
+      <button class="danger" (click)="confirmAndRemove()">Sim</button>
+      <button class="cancel" (click)="cancelRemove()">Não</button>
+    </div>
+    <button *ngIf="confirmingPlayer?.id !== player.id" (click)="confirmRemove(player)">✖</button>
+  </li>
+</ul>
