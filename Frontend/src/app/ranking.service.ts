@@ -1,105 +1,124 @@
-import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import  { HttpClient, HttpErrorResponse } from "@angular/common/http"
+import {  Observable, of } from "rxjs"
+import { catchError } from "rxjs/operators"
+import { Injectable } from "@angular/core"
 
 export interface ScoreRecord {
-  id?: number;
-  playerId: number;
-  playerName?: string;
-  date: string;
-  score: number;
+  playerName: string
+  points: number
+  date?: string
 }
 
 export interface PlayerRanking {
-  playerId: number;
-  playerName: string;
-  totalScore: number;
+  playerName: string
+  totalScore: number
+}
+
+export interface PlayerStatistics {
+  playerName: string
+  gamesPlayed: number
+  averageScore: number
+  highestScore: number
+  lowestScore: number
+  recordBrokenCount: number
+  timePlaying: string
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class RankingService {
-  private apiUrl = 'https://localhost:7000/api/scores';
-  
-  // Dados mock para fallback
+  private apiUrl = "https://localhost:7286/api/Score"
+
   private mockScores: ScoreRecord[] = [
-    { id: 1, playerId: 1, playerName: 'Yan Stassi', date: '2024-01-15', score: 1500 },
-    { id: 2, playerId: 2, playerName: 'Beatriz Zuim', date: '2024-01-16', score: 1200 },
-    { id: 3, playerId: 1, playerName: 'Yan Stassi', date: '2024-01-17', score: 800 }
-  ];
+    { playerName: "Yan Stassi", points: 1500, date: "2024-01-15" },
+    { playerName: "Beatriz Zuim", points: 1200, date: "2024-01-16" },
+    { playerName: "Yan Stassi", points: 800, date: "2024-01-17" },
+  ]
 
   constructor(private http: HttpClient) {}
 
   getScores(): Observable<ScoreRecord[]> {
     return this.http.get<ScoreRecord[]>(this.apiUrl).pipe(
       catchError((error: HttpErrorResponse) => {
-        console.warn('API não disponível, usando dados mock:', error);
-        return of(this.mockScores);
-      })
-    );
+        console.warn("API não disponível, usando dados mock para getScores:", error)
+        return of(this.mockScores)
+      }),
+    )
   }
 
-  addScore(playerId: number, date: string, score: number): Observable<ScoreRecord> {
-    return this.http.post<ScoreRecord>(this.apiUrl, { playerId, date, score }).pipe(
+  addScore(playerName: string, date: string, score: number): Observable<any> {
+    const scoreDto = { playerName: playerName, points: score }
+    return this.http.post<any>(this.apiUrl, scoreDto).pipe(
       catchError((error: HttpErrorResponse) => {
-        console.warn('API não disponível, simulando adição de score:', error);
-        const newScore: ScoreRecord = {
-          id: Math.max(...this.mockScores.map(s => s.id || 0)) + 1,
-          playerId,
+        console.warn("API não disponível, simulando adição de score:", error)
+        const newMockScore: ScoreRecord = {
+          playerName,
+          points: score,
           date,
-          score,
-          playerName: `Player ${playerId}`
-        };
-        this.mockScores.push(newScore);
-        return of(newScore);
-      })
-    );
+        }
+        this.mockScores.push(newMockScore)
+        return of(newMockScore)
+      }),
+    )
   }
 
   getRanking(): Observable<PlayerRanking[]> {
     return this.http.get<PlayerRanking[]>(`${this.apiUrl}/ranking`).pipe(
       catchError((error: HttpErrorResponse) => {
-        console.warn('API não disponível, calculando ranking dos dados mock:', error);
-        return this.calculateRankingFromScores();
-      })
-    );
+        console.warn("API não disponível, calculando ranking dos dados mock:", error)
+        return this.calculateRankingFromScores()
+      }),
+    )
   }
 
-  getTotalScoreByPlayer(playerId: number): Observable<number> {
-    return this.http.get<number>(`${this.apiUrl}/player/${playerId}/total`).pipe(
+  getTotalScoreByPlayer(playerName: string): Observable<number> {
+    return this.http.get<number>(`${this.apiUrl}/player/${playerName}/total`).pipe(
       catchError((error: HttpErrorResponse) => {
-        console.warn('API não disponível, calculando total dos dados mock:', error);
+        console.warn("API não disponível, calculando total dos dados mock:", error)
         const total = this.mockScores
-          .filter(score => score.playerId === playerId)
-          .reduce((sum, score) => sum + score.score, 0);
-        return of(total);
-      })
-    );
+          .filter((score) => score.playerName === playerName)
+          .reduce((sum, score) => sum + score.points, 0)
+        return of(total)
+      }),
+    )
+  }
+
+  getPlayerStatistics(playerName: string): Observable<PlayerStatistics> {
+    return this.http.get<PlayerStatistics>(`${this.apiUrl}/player/${playerName}/statistics`).pipe(
+      catchError((error: HttpErrorResponse) => {
+        console.warn("API não disponível, simulando estatísticas do jogador:", error)
+        // Implementar cálculo de estatísticas mock se necessário para fallback
+        return of({
+          playerName,
+          gamesPlayed: 0,
+          averageScore: 0,
+          highestScore: 0,
+          lowestScore: 0,
+          recordBrokenCount: 0,
+          timePlaying: "0 dias",
+        })
+      }),
+    )
   }
 
   private calculateRankingFromScores(): Observable<PlayerRanking[]> {
-    const totals: { [playerId: number]: { name: string, total: number } } = {};
-    
+    const totals: { [playerName: string]: { total: number } } = {}
+
     for (const score of this.mockScores) {
-      if (!totals[score.playerId]) {
-        totals[score.playerId] = {
-          name: score.playerName || `Player ${score.playerId}`,
-          total: 0
-        };
+      if (!totals[score.playerName]) {
+        totals[score.playerName] = { total: 0 }
       }
-      totals[score.playerId].total += score.score;
+      totals[score.playerName].total += score.points
     }
 
     const ranking: PlayerRanking[] = Object.entries(totals)
-      .map(([playerId, data]) => ({
-        playerId: Number(playerId),
-        playerName: data.name,
-        totalScore: data.total
+      .map(([playerName, data]) => ({
+        playerName: playerName,
+        totalScore: data.total,
       }))
-      .sort((a, b) => b.totalScore - a.totalScore);
+      .sort((a, b) => b.totalScore - a.totalScore)
 
-    return of(ranking);
+    return of(ranking)
   }
 }

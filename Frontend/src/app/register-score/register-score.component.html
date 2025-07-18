@@ -1,8 +1,8 @@
 <form (ngSubmit)="save()">
   <label>Jogador:</label>
-  <select [(ngModel)]="newScore.playerId" name="player" required>
+  <select [(ngModel)]="newScore.playerName" name="player" required>
     <option value="" disabled selected>Selecione</option>
-    <option *ngFor="let player of players" [value]="player.id">{{ player.playerName }}</option>
+    <option *ngFor="let player of players" [value]="player.playerName">{{ player.playerName }}</option>
   </select>
 
   <label>Data da Partida:</label>

@@ -1,101 +1,89 @@
-import { Component, OnInit } from '@angular/core';
-import { PlayersService, Player } from '../players.service';
-import { RankingService } from '../ranking.service';
+import { Component,  OnInit } from "@angular/core" // Importe Component e OnInit
+import  { PlayersService, Player } from "../players.service"
+import  { RankingService, PlayerStatistics } from "../ranking.service"
 
 @Component({
-  selector: 'app-players',
-  templateUrl: './players.component.html',
-  styleUrls: ['./players.component.css']
+  // Certifique-se de que o decorator @Component está aqui
+  selector: "app-players",
+  templateUrl: "./players.component.html",
+  styleUrls: ["./players.component.css"],
 })
 export class PlayersComponent implements OnInit {
-  players: Player[] = [];
-  selectedPlayer: Player | null = null;
-  totalScore: number = 0;
-  newPlayerName: string = '';
-  confirmingPlayer: Player | null = null;
+  players: Player[] = []
+  selectedPlayer: Player | null = null
+  totalScore = 0
+  newPlayerName = ""
+  playerStatistics: PlayerStatistics | null = null
 
   constructor(
     private playersService: PlayersService,
-    private rankingService: RankingService
+    private rankingService: RankingService,
   ) {}
 
   ngOnInit(): void {
-    this.loadPlayers();
+    this.loadPlayers()
   }
 
   loadPlayers(): void {
     this.playersService.getPlayers().subscribe({
       next: (players: Player[]) => {
-        this.players = players;
+        this.players = players
       },
       error: (error: any) => {
-        console.error('Erro ao carregar jogadores:', error);
-        alert('Erro ao carregar jogadores');
-      }
-    });
+        console.error("Erro ao carregar jogadores:", error)
+        alert("Erro ao carregar jogadores")
+      },
+    })
   }
 
   selectPlayer(player: Player): void {
-    this.selectedPlayer = player;
-    if (player.id) {
-      this.rankingService.getTotalScoreByPlayer(Number(player.id)).subscribe({
+    this.selectedPlayer = player
+    this.totalScore = 0
+    this.playerStatistics = null
+
+    if (player.playerName) {
+      this.rankingService.getTotalScoreByPlayer(player.playerName).subscribe({
         next: (total: number) => {
-          this.totalScore = total;
+          this.totalScore = total
         },
         error: (error: any) => {
-          console.error('Erro ao carregar pontuação:', error);
-          this.totalScore = 0;
-        }
-      });
+          console.error("Erro ao carregar pontuação total:", error)
+          this.totalScore = 0
+        },
+      })
     }
   }
 
   addPlayer(): void {
-    const trimmedName = this.newPlayerName.trim();
+    const trimmedName = this.newPlayerName.trim()
     if (trimmedName) {
       this.playersService.addPlayer(trimmedName).subscribe({
         next: (newPlayer: Player) => {
-          this.newPlayerName = '';
-          this.loadPlayers();
+          this.newPlayerName = ""
+          this.loadPlayers()
         },
         error: (error: any) => {
-          console.error('Erro ao adicionar jogador:', error);
-          alert('Erro ao adicionar jogador');
-        }
-      });
-    }
-  }
-
-  removePlayer(player: Player): void {
-    if (player.id) {
-      this.playersService.removePlayer(player.id).subscribe({
-        next: () => {
-          if (this.selectedPlayer?.id === player.id) {
-            this.selectedPlayer = null;
-            this.totalScore = 0;
-          }
-          this.loadPlayers();
+          console.error("Erro ao adicionar jogador:", error)
+          alert("Erro ao adicionar jogador")
         },
-        error: (error: any) => {
-          console.error('Erro ao remover jogador:', error);
-          alert('Erro ao remover jogador');
-        }
-      });
+      })
     }
   }
 
-  confirmRemove(player: Player): void {
-    this.confirmingPlayer = player;
+  viewPlayerStatistics(playerName: string): void {
+    this.rankingService.getPlayerStatistics(playerName).subscribe({
+      next: (stats: PlayerStatistics) => {
+        this.playerStatistics = stats
+      },
+      error: (error: any) => {
+        console.error("Erro ao carregar estatísticas do jogador:", error)
+        alert("Erro ao carregar estatísticas do jogador")
+        this.playerStatistics = null
+      },
+    })
   }
 
-  cancelRemove(): void {
-    this.confirmingPlayer = null;
-  }
-
-  confirmAndRemove(): void {
-    if (this.confirmingPlayer) {
-      this.removePlayer(this.confirmingPlayer);
-      this.confirmingPlayer = null;
-    }
+  closePlayerStatistics(): void {
+    this.playerStatistics = null
   }
 }
