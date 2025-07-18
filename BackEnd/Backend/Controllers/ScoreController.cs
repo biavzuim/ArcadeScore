@@ -30,7 +30,7 @@ namespace Backend.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteScore(Guid id)
+        public IActionResult DeleteScore(int id)
         {
             var removed = _scoreService.RemoveScore(id);
             if (!removed)

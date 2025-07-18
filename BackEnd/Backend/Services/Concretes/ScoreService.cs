@@ -25,7 +25,7 @@ namespace Backend.Services.Concretes
             return JsonConvert.DeserializeObject<List<Score>>(json) ?? new List<Score>();
         }
 
-        public bool RemoveScore(Guid id)
+        public bool RemoveScore(int id)
         {
             var scores = GetAllScores();
             var scoreToRemove = scores.FirstOrDefault(s => s.Id == id);
@@ -42,9 +42,11 @@ namespace Backend.Services.Concretes
         {
             var scores = GetAllScores();
 
+            int newId = scores.Count > 0 ? scores.Max(s => s.Id) + 1 : 1;
+
             var score = new Score
             {
-                Id = Guid.NewGuid(),
+                Id = newId,
                 PlayerName = dto.PlayerName ?? "Unknown Player", // Garante que PlayerName não seja nulo
                 Points = dto.Points,
                 CreatedAt = DateTime.UtcNow
@@ -88,8 +90,13 @@ namespace Backend.Services.Concretes
                 .OrderBy(s => s.CreatedAt)
                 .ToList();
 
-            if (!playerScores.Any())
+            // Filtra apenas as pontuações de jogos reais (pontos > 0) para as estatísticas
+            var relevantScores = playerScores.Where(s => s.Points > 0).ToList();
+
+            if (!relevantScores.Any())
             {
+                // Se o jogador só tem pontuações de 0 pontos ou nenhuma pontuação,
+                // as estatísticas devem refletir isso.
                 return new PlayerStatisticsDto
                 {
                     PlayerName = playerName,
@@ -102,16 +109,16 @@ namespace Backend.Services.Concretes
                 };
             }
 
-            int gamesPlayed = playerScores.Count;
-            double averageScore = playerScores.Average(s => s.Points);
-            int highestScore = playerScores.Max(s => s.Points);
-            int lowestScore = playerScores.Min(s => s.Points);
+            int gamesPlayed = relevantScores.Count;
+            double averageScore = relevantScores.Average(s => s.Points);
+            int highestScore = relevantScores.Max(s => s.Points);
+            int lowestScore = relevantScores.Min(s => s.Points);
 
             int recordBrokenCount = 0;
             int currentHighest = 0;
             bool firstScoreProcessed = false;
 
-            foreach (var score in playerScores)
+            foreach (var score in relevantScores) // Itera apenas sobre as pontuações relevantes
             {
                 if (!firstScoreProcessed)
                 {
@@ -125,8 +132,8 @@ namespace Backend.Services.Concretes
                 }
             }
 
-            DateTime firstGameDate = playerScores.Min(s => s.CreatedAt);
-            DateTime lastGameDate = playerScores.Max(s => s.CreatedAt);
+            DateTime firstGameDate = relevantScores.Min(s => s.CreatedAt); // Usa relevantScores
+            DateTime lastGameDate = relevantScores.Max(s => s.CreatedAt);   // Usa relevantScores
             TimeSpan timeSpan = lastGameDate - firstGameDate;
 
             string timePlaying = FormatTimeSpan(timeSpan);

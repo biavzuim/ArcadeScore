@@ -1,96 +1,106 @@
-:host {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 2rem;
-  font-family: "Segoe UI", sans-serif;
-  background-color: #fff;
+:host {/* host é um pseudoseletor representa o elemento principal do componente <app-player>*/
+   display: flex; /*container flexivel, ajuda no alinhamento dos elementos filhos*/
+   flex-direction: column; /*filhos ficam abaixo um do outro em coluna*/
+   align-items: center;
+   font-family: "Segoe UI", sans-serif; 
+   background-color: #ffe0eb;
+   box-sizing:border-box;
+   padding: 1rem 2rem;  
+   border-radius: 12px;  /*arrendonda a borda rosa*/
+   border: 1px solid #ffb6c1; 
+    /* Limitar largura para virar um quadrado/retângulo */
+   width: 100%;/* para garantir ocupar o máximo */
+   max-width: 600px; /* ou outro valor que preferir */
+   margin: 2rem auto; /* centraliza horizontalmente com margem automática */
+
 }
 
-h2 {
+h2 { /*estiliza o titulo Lista de Jogadores*/
   font-size: 2rem;
   margin-bottom: 1.5rem;
   color: #222;
+  display: flex; 
 }
 
-.add-player-container {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 2rem;
-  width: 100%;
-  max-width: 500px;
-  justify-content: center;
+.add-player-container { /*estiliza o container de add player*/
+  display: flex; 
+  gap: 1rem; /*espaço entre input e botão*/
+  margin-bottom: 2rem; 
+  width: 100%; /*ocupa toda a largura disponivel*/
+  max-width: 500px; /*no maximo 500px de largura*/
+  justify-content: center; /*centraliza os elementos dentro do container*/
 }
 
-.add-player-container input[type="text"] {
-  flex: 1;
-  padding: 12px;
-  font-size: 16px;
-  border: 2px solid #ff8ab0;
-  border-radius: 10px;
-  outline: none;
+.add-player-container input[type="text"] { /*estiliza o campo de digitação*/
+  flex: 0,75; /*faz o campo crescer e ocupar o maximo de espaço possivel no container*/
+  padding: 12px; /*espaço interno */
+  font-size: 16px; 
+  border: 2px solid #ff8ab0; /*borda rosa clara*/
+  border-radius: 10px; /*deixa o campo arredondado*/
+  outline: none; 
   border-radius: 142px;
 }
 
-.add-player-container button {
-  padding: 12px 20px;
+.add-player-container button { /*botão adicionar*/
+  padding: 12px 20px; 
   font-size: 16px;
-  font-weight: bold;
-  color: white;
+  font-weight: bold; /*deixa o texto em negrito*/
+  color: white; 
   background-color: #ff8ab0;
   border: none;
   border-radius: 10px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
+  cursor: pointer; /*mãozinha*/
+  transition: background-color 0.2s ease; /*faz o botão mudar de cor suavemente*/
   border-radius: 142px;
 }
 
-.add-player-container button:hover {
-  background-color: #ff6393;
+.add-player-container button:hover { /*quando o mouse estiver por cima do botão*/
+  background-color: #ff6393; 
   border-radius: 142px;
 }
 
-ul {
-  list-style: none;
-  padding: 0;
+ul { /*lista de jogadores*/ 
+  list-style: none;  /*remove os pontinhos da lista*/
+  padding: 0; 
   margin: 0;
   width: 100%;
-  max-width: 500px;
+  max-width: 350px; 
 }
 
-li {
+li { /*cada item da lista*/
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  justify-content: space-between; /*distribui os elementos filhos com o máximo de espaço entre eles*/
+  align-items: center; 
   background-color: #fff0f5;
   border: 1px solid #ff8ab0;
-  border-radius: 142px;
-  padding: 14px 20px;
+  border-radius: 142px; 
+  padding: 14px 20px; /*14 em cima e em baixo e 20px nos lados*/
   margin-bottom: 12px;
   font-size: 1rem;
 }
 
-li a {
+li a { /*estiliza qualiquer link a dentro de li*/
   text-decoration: none;
   color: #c2185b;
   font-weight: 600;
 }
 
 li button {
+  
   background-color: #ff8ab0;
   color: white;
-  border: none;
-  border-radius: 20px;
-  width: 52px;
+  border: none;  /*remove qualquer borda padrão do botão*/
+  border-radius: 20px; 
+  width: 52px; /*tamanho fixo do botão*/
   height: 32px;
-  font-size: 18px;
-  line-height: 1;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
+  font-size: 18px; 
+  line-height: 1; /*ajusta a altura da linha para ficar mais centralizado verticalmente*/
+  cursor: pointer; 
+  transition: background-color 0.2s ease; /*cria um espaço a esquerda do botão para não ficar colado no texto*/
   margin-left: 20px;
 }
 
-li button:hover {
+li button:hover { /*efeito ao passar mouse no botãi*/
   background-color: #ff4f88;
 }
 
@@ -99,9 +109,10 @@ div[ngIf] {
   background-color: #ffe0eb;
   padding: 1rem 2rem;
   border-radius: 12px;
-  border: 1px solid #ffb6c1;
-  text-align: center;
-  max-width: 500px;
+  border: 1px solid #ffb6c1;/* Borda rosa clara de 1px */
+  text-align: center;/* Alinha o texto ao centro */
+  max-width: 500px;  /* Largura máxima da div */
+
 }
 
 .player-stats-modal {
@@ -130,7 +141,7 @@ div[ngIf] {
 }
 
 .player-stats-modal button {
-  margin-top: 1rem;
+  margin-bottom: 1rem;
   background-color: #d6336c;
   color: white;
   font-weight: 700;
@@ -144,4 +155,22 @@ div[ngIf] {
 
 .player-stats-modal button:hover {
   background-color: #ff69b4;
+}
+
+/* Estilos para o botão "Ver Estatísticas" */
+.stats-button {
+  background-color: #d6336c; /* Rosa forte */
+  color: white;
+  font-weight: 700;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 142px; /* Para combinar com os outros botões arredondados */
+  cursor: pointer;
+  font-size: 1.1rem;
+  transition: background-color 0.3s ease;
+  margin-top: 1rem; /* Espaçamento acima do botão */
+}
+
+.stats-button:hover {
+  background-color: #ff69b4; /* Rosa mais claro no hover */
 }

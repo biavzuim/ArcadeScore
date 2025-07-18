@@ -7,7 +7,7 @@
 <div *ngIf="selectedPlayer">
   <h3>{{ selectedPlayer.playerName }}</h3>
   <p>Pontuação Total: {{ totalScore }}</p>
-  <button (click)="viewPlayerStatistics(selectedPlayer.playerName)">Ver Estatísticas</button>
+  <button (click)="viewPlayerStatistics(selectedPlayer.playerName)" class="stats-button">Ver Estatísticas</button>
 </div>
 
 <ul>

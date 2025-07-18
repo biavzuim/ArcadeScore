@@ -1,20 +1,3 @@
 [
-  {
-    "Id": "466e3a96-08d0-4600-91d5-6ae3841f54d4",
-    "PlayerName": "Beatriz",
-    "Points": 0,
-    "CreatedAt": "2025-07-17T17:56:31.4234729Z"
-  },
-  {
-    "Id": "2a1bcbfa-cfaf-4770-83c5-b6eb6e628648",
-    "PlayerName": "Leonardo 1",
-    "Points": 0,
-    "CreatedAt": "2025-07-18T15:17:06.0542461Z"
-  },
-  {
-    "Id": "6a6e43ef-d610-41de-8c6a-34b4a5719b4c",
-    "PlayerName": "Leonardo 1",
-    "Points": 55,
-    "CreatedAt": "2025-07-18T15:17:15.0746618Z"
-  }
+
 ]

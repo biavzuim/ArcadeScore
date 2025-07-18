@@ -8,7 +8,7 @@ namespace Backend.Services.Abstracts
     {
         List<Score> GetAllScores();
         Score AddScore(ScoreDto dto);
-        bool RemoveScore(Guid id);
+        bool RemoveScore(int id);
         List<PlayerRankingDto> GetRanking(); // Novo método
         int GetTotalScoreByPlayer(string playerName); // Novo método
         PlayerStatisticsDto GetPlayerStatistics(string playerName); // Novo método

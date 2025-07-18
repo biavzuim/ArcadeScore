@@ -8,7 +8,7 @@ export interface Player {
 }
 
 interface BackendScore {
-  id: string // Guid
+  id: number, 
   playerName: string
   points: number
   createdAt: string
@@ -61,7 +61,7 @@ export class PlayersService {
   // Este método remove um registro de pontuação específico por ID.
   // Ele não remove um "jogador" do ponto de vista de nomes únicos.
   // Mantido para compatibilidade, mas o botão de remoção será removido da UI de jogadores.
-  removePlayer(id: string): Observable<void> {
+  removePlayer(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
       catchError((error: HttpErrorResponse) => {
         console.warn("API não disponível, simulando remoção de pontuação:", error)
