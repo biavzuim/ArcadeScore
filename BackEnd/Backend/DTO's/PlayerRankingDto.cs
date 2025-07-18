@@ -1,8 +1,8 @@
 ﻿namespace Backend.DTO_s
 {
-    public class ScoreDto
+    public class PlayerRankingDto
     {
         public string? PlayerName { get; set; } // Alterado para string?
-        public int Points { get; set; }
+        public int TotalScore { get; set; }
     }
 }

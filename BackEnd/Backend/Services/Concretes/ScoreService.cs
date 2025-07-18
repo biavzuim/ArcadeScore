@@ -5,70 +5,158 @@ using Backend.DTO_s;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System;
 
 namespace Backend.Services.Concretes
 {
     public class ScoreService : IScoreService
     {
-        // Caminho do arquivo onde os dados dos scores são salvos localmente
         private readonly string _filePath = "Data/score-data.json";
 
         public ScoreService()
         {
-            // Se o arquivo ainda não existir, cria um novo arquivo vazio com um array JSON
             if (!File.Exists(_filePath))
                 File.WriteAllText(_filePath, "[]");
         }
 
-        /// <summary>
-        /// Lê todos os scores armazenados no arquivo JSON.
-        /// </summary>
-        /// <returns>Lista de objetos Score</returns>
         public List<Score> GetAllScores()
         {
-            var json = File.ReadAllText(_filePath); // Lê o conteúdo do arquivo
-            return JsonConvert.DeserializeObject<List<Score>>(json); // Converte de JSON para lista de Score
+            var json = File.ReadAllText(_filePath);
+            return JsonConvert.DeserializeObject<List<Score>>(json) ?? new List<Score>();
         }
 
-        /// <summary>
-        /// Remove um score com base no ID fornecido.
-        /// </summary>
-        /// <param name="id">ID do score a ser removido</param>
-        /// <returns>True se removido com sucesso, false se não encontrado</returns>
         public bool RemoveScore(Guid id)
         {
-            var scores = GetAllScores(); // Carrega todos os scores
-            var scoreToRemove = scores.FirstOrDefault(s => s.Id == id); // Procura o score com o ID fornecido
+            var scores = GetAllScores();
+            var scoreToRemove = scores.FirstOrDefault(s => s.Id == id);
 
             if (scoreToRemove == null)
-                return false; // Não encontrou o score para remover
+                return false;
 
-            scores.Remove(scoreToRemove); // Remove da lista
-            File.WriteAllText(_filePath, JsonConvert.SerializeObject(scores, Formatting.Indented)); // Salva a nova lista no arquivo
-            return true; // Remoção bem-sucedida
+            scores.Remove(scoreToRemove);
+            File.WriteAllText(_filePath, JsonConvert.SerializeObject(scores, Formatting.Indented));
+            return true;
         }
 
-        /// <summary>
-        /// Adiciona um novo score com base nos dados recebidos (DTO).
-        /// </summary>
-        /// <param name="dto">Dados do novo score (nome do jogador e pontos)</param>
-        /// <returns>O score criado com ID e data de criação</returns>
         public Score AddScore(ScoreDto dto)
         {
-            var scores = GetAllScores(); // Carrega os scores existentes
+            var scores = GetAllScores();
 
             var score = new Score
             {
-                Id = Guid.NewGuid(), // Gera um novo ID único
-                PlayerName = dto.PlayerName, // Nome do jogador
-                Points = dto.Points,         // Pontuação
-                CreatedAt = DateTime.UtcNow  // Data atual (UTC)
+                Id = Guid.NewGuid(),
+                PlayerName = dto.PlayerName ?? "Unknown Player", // Garante que PlayerName não seja nulo
+                Points = dto.Points,
+                CreatedAt = DateTime.UtcNow
             };
 
-            scores.Add(score); // Adiciona o novo score à lista
-            File.WriteAllText(_filePath, JsonConvert.SerializeObject(scores, Formatting.Indented)); // Salva a lista atualizada no arquivo
+            scores.Add(score);
+            File.WriteAllText(_filePath, JsonConvert.SerializeObject(scores, Formatting.Indented));
 
-            return score; // Retorna o novo score criado
+            return score;
+        }
+
+        public List<PlayerRankingDto> GetRanking()
+        {
+            var scores = GetAllScores();
+            var ranking = scores
+                .GroupBy(s => s.PlayerName)
+                .Select(g => new PlayerRankingDto
+                {
+                    PlayerName = g.Key,
+                    TotalScore = g.Sum(s => s.Points)
+                })
+                .OrderByDescending(r => r.TotalScore)
+                .Take(10)
+                .ToList();
+
+            return ranking;
+        }
+
+        public int GetTotalScoreByPlayer(string playerName)
+        {
+            var scores = GetAllScores();
+            return scores
+                .Where(s => s.PlayerName.Equals(playerName, StringComparison.OrdinalIgnoreCase))
+                .Sum(s => s.Points);
+        }
+
+        public PlayerStatisticsDto GetPlayerStatistics(string playerName)
+        {
+            var playerScores = GetAllScores()
+                .Where(s => s.PlayerName.Equals(playerName, StringComparison.OrdinalIgnoreCase))
+                .OrderBy(s => s.CreatedAt)
+                .ToList();
+
+            if (!playerScores.Any())
+            {
+                return new PlayerStatisticsDto
+                {
+                    PlayerName = playerName,
+                    GamesPlayed = 0,
+                    AverageScore = 0,
+                    HighestScore = 0,
+                    LowestScore = 0,
+                    RecordBrokenCount = 0,
+                    TimePlaying = "N/A"
+                };
+            }
+
+            int gamesPlayed = playerScores.Count;
+            double averageScore = playerScores.Average(s => s.Points);
+            int highestScore = playerScores.Max(s => s.Points);
+            int lowestScore = playerScores.Min(s => s.Points);
+
+            int recordBrokenCount = 0;
+            int currentHighest = 0;
+            bool firstScoreProcessed = false;
+
+            foreach (var score in playerScores)
+            {
+                if (!firstScoreProcessed)
+                {
+                    currentHighest = score.Points;
+                    firstScoreProcessed = true;
+                }
+                else if (score.Points > currentHighest)
+                {
+                    currentHighest = score.Points;
+                    recordBrokenCount++;
+                }
+            }
+
+            DateTime firstGameDate = playerScores.Min(s => s.CreatedAt);
+            DateTime lastGameDate = playerScores.Max(s => s.CreatedAt);
+            TimeSpan timeSpan = lastGameDate - firstGameDate;
+
+            string timePlaying = FormatTimeSpan(timeSpan);
+
+            return new PlayerStatisticsDto
+            {
+                PlayerName = playerName,
+                GamesPlayed = gamesPlayed,
+                AverageScore = averageScore,
+                HighestScore = highestScore,
+                LowestScore = lowestScore,
+                RecordBrokenCount = recordBrokenCount,
+                TimePlaying = timePlaying
+            };
+        }
+
+        private string FormatTimeSpan(TimeSpan ts)
+        {
+            if (ts.TotalDays >= 1)
+            {
+                return $"{ts.Days} dias, {ts.Hours} horas";
+            }
+            else if (ts.TotalHours >= 1)
+            {
+                return $"{ts.Hours} horas, {ts.Minutes} minutos";
+            }
+            else
+            {
+                return $"{ts.Minutes} minutos, {ts.Seconds} segundos";
+            }
         }
     }
 }

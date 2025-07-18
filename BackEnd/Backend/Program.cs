@@ -1,5 +1,8 @@
 ﻿using Backend.Services.Abstracts;
 using Backend.Services.Concretes;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,10 +27,13 @@ builder.Services.AddScoped<IScoreService, ScoreService>();
 var app = builder.Build();
 
 // Middleware
-app.UseSwagger();
-app.UseSwaggerUI();
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
-app.UseCors("Angular"); // ← AQUI aplica a política
+app.UseCors("Angular"); // Aplica a política CORS
 
 app.UseAuthorization();
 

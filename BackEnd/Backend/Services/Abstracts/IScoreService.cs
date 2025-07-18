@@ -1,5 +1,6 @@
 ﻿using Backend.DTO_s;
 using Backend.Models;
+using System.Collections.Generic;
 
 namespace Backend.Services.Abstracts
 {
@@ -7,8 +8,9 @@ namespace Backend.Services.Abstracts
     {
         List<Score> GetAllScores();
         Score AddScore(ScoreDto dto);
-
         bool RemoveScore(Guid id);
-
+        List<PlayerRankingDto> GetRanking(); // Novo método
+        int GetTotalScoreByPlayer(string playerName); // Novo método
+        PlayerStatisticsDto GetPlayerStatistics(string playerName); // Novo método
     }
 }
