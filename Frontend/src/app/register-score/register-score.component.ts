@@ -1,57 +1,58 @@
-import { Component, type OnInit } from "@angular/core" // Importe Component e OnInit
-import  { PlayersService, Player } from "../players.service"
-import  { RankingService } from "../ranking.service"
+import { Component, type OnInit } from "@angular/core";
+import { PlayersService, Player } from "../players.service";
+import { RankingService } from "../ranking.service";
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
-  // Certifique-se de que o decorator @Component está aqui
   selector: "app-register-score",
   templateUrl: "./register-score.component.html",
   styleUrls: ["./register-score.component.css"],
 })
 export class RegisterScoreComponent implements OnInit {
-  players: Player[] = []
+  players: Player[] = [];
 
   newScore = {
     playerName: null as string | null,
     date: "",
     score: null as number | null,
-  }
+  };
 
   constructor(
-    private playersService: PlayersService,
-    private rankingService: RankingService,
+    private readonly playersService: PlayersService,
+    private readonly rankingService: RankingService,
+    private readonly toastr: ToastrService // ✅ agora com readonly também
   ) {}
 
   ngOnInit() {
-    this.loadPlayers()
+    this.loadPlayers();
   }
 
   loadPlayers(): void {
     this.playersService.getPlayers().subscribe({
       next: (players) => {
-        this.players = players
+        this.players = players;
       },
       error: (error) => {
-        console.error("Erro ao carregar jogadores:", error)
-        alert("Erro ao carregar jogadores")
+        console.error("Error loading players:", error);
+        this.toastr.error("Error loading players", "Error");
       },
-    })
+    });
   }
 
   save() {
     if (this.newScore.playerName && this.newScore.date && this.newScore.score != null) {
       this.rankingService.addScore(this.newScore.playerName, this.newScore.date, this.newScore.score).subscribe({
-        next: (result) => {
-          this.newScore = { playerName: null, date: "", score: null }
-          alert("Pontuação registrada com sucesso!")
+        next: () => {
+          this.newScore = { playerName: null, date: "", score: null };
+          this.toastr.success("Score recorded successfully!", "Success");
         },
         error: (error) => {
-          console.error("Erro ao registrar pontuação:", error)
-          alert("Erro ao registrar pontuação")
+          console.error("Error registering score:", error);
+          this.toastr.error("Error recording score", "Error");
         },
-      })
+      });
     } else {
-      alert("Preencha todos os campos corretamente.")
+      this.toastr.warning("Please fill in all fields correctly.", "Attention");
     }
   }
 }

@@ -107,7 +107,7 @@ li button:hover { /*efeito ao passar mouse no botãi*/
 div[ngIf] {
   margin-top: 2rem;
   background-color: #ffe0eb;
-  padding: 1rem 2rem;
+  padding: 1rem 2rem;/* Espaço interno: 16px cima/baixo, 32px laterais */
   border-radius: 12px;
   border: 1px solid #ffb6c1;/* Borda rosa clara de 1px */
   text-align: center;/* Alinha o texto ao centro */
@@ -116,19 +116,19 @@ div[ngIf] {
 }
 
 .player-stats-modal {
-  margin-top: 2rem;
-  background-color: #ffe0eb;
+  margin-top: 2rem; /* Espaço acima do modal */
+  background-color: #ffe0eb; /* Fundo rosa claro */
   padding: 1rem 2rem;
   border-radius: 12px;
   border: 1px solid #ffb6c1;
   text-align: center;
-  max-width: 500px;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 1000;
-  box-shadow: 0 8px 16px rgba(255, 105, 180, 0.4);
+  max-width: 500px; /* Largura máxima do modal */
+  position: fixed; /* Fixa o modal na tela (não rola junto com a página) */
+  top: 50%;/* Posiciona o topo do modal no meio da tela */
+  left: 50%; /* Posiciona a esquerda do modal no meio da tela */
+  transform: translate(-50%, -50%);  /* Move o modal para o centro exato da tela */
+  z-index: 1000;  /* Garante que o modal fique acima de todos os outros elementos */
+  box-shadow: 0 8px 16px rgba(255, 105, 180, 0.4);/* Sombra rosa suave ao redor do modal */
 }
 
 .player-stats-modal h3 {
@@ -140,7 +140,7 @@ div[ngIf] {
   margin-bottom: 0.5rem;
 }
 
-.player-stats-modal button {
+.player-stats-modal button { /*botão de fechar modal*/
   margin-bottom: 1rem;
   background-color: #d6336c;
   color: white;
@@ -174,3 +174,9 @@ div[ngIf] {
 .stats-button:hover {
   background-color: #ff69b4; /* Rosa mais claro no hover */
 }
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+

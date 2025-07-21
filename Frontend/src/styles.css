@@ -1,1 +1,34 @@
-/* You can add global styles to this file, and also import other style files */
+/* exemplo de customização do toastr sucesso */
+.toast-success {
+  background: #4CAF50 !important; /* verde mais forte */
+  color: white !important;
+  font-weight: bold;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  border-radius: 8px !important;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  align-items: center;
+ max-width: 300px; 
+
+}
+
+/* exemplo para toastr erro */
+.toast-error {
+  background: #f44336 !important; /* vermelho */
+  color: white !important;
+  border-radius: 8px !important;
+  font-weight: bold;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  align-items: center;
+ max-width: 300px; 
+}
+
+/* alterar fonte e tamanho */
+.toast-message {
+  font-size: 14px !important;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  align-items: center;
+ max-width: 300px; 
+}

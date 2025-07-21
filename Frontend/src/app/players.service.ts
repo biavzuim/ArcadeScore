@@ -37,7 +37,7 @@ export class PlayersService {
         return uniquePlayerNames.map((name) => ({ playerName: name }))
       }),
       catchError((error: HttpErrorResponse) => {
-        console.warn("API não disponível para jogadores, usando dados mock:", error)
+        console.warn("API not available to players, using mock data:", error)
         return of(this.mockPlayers)
       }),
     )
@@ -48,7 +48,7 @@ export class PlayersService {
     return this.http.post<BackendScore>(this.apiUrl, scoreDto).pipe(
       map((backendScore) => ({ playerName: backendScore.playerName })),
       catchError((error: HttpErrorResponse) => {
-        console.warn("API não disponível, simulando adição de jogador:", error)
+        console.warn("API not available, simulating player addition:", error)
         const newPlayer: Player = { playerName }
         if (!this.mockPlayers.some((p) => p.playerName === newPlayer.playerName)) {
           this.mockPlayers.push(newPlayer)
@@ -58,13 +58,11 @@ export class PlayersService {
     )
   }
 
-  // Este método remove um registro de pontuação específico por ID.
-  // Ele não remove um "jogador" do ponto de vista de nomes únicos.
-  // Mantido para compatibilidade, mas o botão de remoção será removido da UI de jogadores.
+
   removePlayer(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
       catchError((error: HttpErrorResponse) => {
-        console.warn("API não disponível, simulando remoção de pontuação:", error)
+        console.warn("API not available, simulating punctuation removal:", error)
         return of(void 0)
       }),
     )

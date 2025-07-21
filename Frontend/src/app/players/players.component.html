@@ -1,16 +1,24 @@
-<h2>Lista de Jogadores</h2>
+<h2>Player's List </h2>
+
 <div class="add-player-container">
-  <input type="text" [(ngModel)]="newPlayerName" placeholder="Novo jogador" />
-  <button (click)="addPlayer()">Adicionar</button>
+  <input type="text" [(ngModel)]="newPlayerName" placeholder="Novo jogador" /> 
+<button (click)="addPlayer()" [disabled]="!newPlayerName.trim()">Add</button>
+
 </div>
 
-<div *ngIf="selectedPlayer">
+<div *ngIf="selectedPlayer"> 
+
+
   <h3>{{ selectedPlayer.playerName }}</h3>
-  <p>Pontuação Total: {{ totalScore }}</p>
-  <button (click)="viewPlayerStatistics(selectedPlayer.playerName)" class="stats-button">Ver Estatísticas</button>
+
+  <p>Total Score: {{ totalScore }}</p>  
+  <p>{{ totalScore }}</p>  
+  <button (click)="viewPlayerStatistics(selectedPlayer.playerName)" class="stats-button">See Statistics</button>
+   
 </div>
 
 <ul>
+
   <li *ngFor="let player of players">
     <a href="#" (click)="selectPlayer(player); $event.preventDefault()">
       {{ player.playerName }}
@@ -19,6 +27,7 @@
 </ul>
 
 <div *ngIf="playerStatistics" class="player-stats-modal">
+
   <h3>Estatísticas de {{ playerStatistics.playerName }}</h3>
   <p>Partidas jogadas: {{ playerStatistics.gamesPlayed }}</p>
   <p>Média de Pontuação: {{ playerStatistics.averageScore | number:'1.0-2' }}</p>
@@ -27,4 +36,6 @@
   <p>Recordes batidos: {{ playerStatistics.recordBrokenCount }}</p>
   <p>Tempo jogando: {{ playerStatistics.timePlaying }}</p>
   <button (click)="closePlayerStatistics()">Fechar</button>
+
 </div>
+ 
