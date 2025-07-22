@@ -2,8 +2,8 @@
 {
     public class PlayerRankingDto
     {
-       
-        public string PlayerName { get; set; } // Alterado para string?
+
+        public string PlayerName { get; set; } = string.Empty;
         public int TotalScore { get; set; }
     }
 }

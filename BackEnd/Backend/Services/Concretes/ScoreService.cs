@@ -1,7 +1,8 @@
-﻿using Newtonsoft.Json;
-using Backend.Services.Abstracts;
-using Backend.Models;
+﻿using Backend.Data;
 using Backend.DTO_s;
+using Backend.Models;
+using Backend.Services.Abstracts;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -11,55 +12,56 @@ namespace Backend.Services.Concretes
     {
         private readonly AppDbContext _context;
 
-        public ScoreService()
+        public ScoreService(AppDbContext context)
         {
-            if (!File.Exists(_filePath))
-                File.WriteAllText(_filePath, "[]");
+            _context = context;
+
+            // Se quiser inicializar a tabela com lista vazia no construtor
+            if (!_context.Scores.Any())
+            {
+                _context.Scores.AddRange(new List<Score>()); // Opcional, só para garantir
+                _context.SaveChanges();
+            }
         }
 
         public List<Score> GetAllScores()
         {
-            var json = File.ReadAllText(_filePath);
-            return JsonConvert.DeserializeObject<List<Score>>(json) ?? new List<Score>();
+            return _context.Scores.ToList();
         }
 
         public bool RemoveScore(int id)
         {
-            var scores = GetAllScores();
-            var scoreToRemove = scores.FirstOrDefault(s => s.Id == id);
-
+            var scoreToRemove = _context.Scores.FirstOrDefault(s => s.Id == id);
             if (scoreToRemove == null)
                 return false;
 
-            scores.Remove(scoreToRemove);
-            File.WriteAllText(_filePath, JsonConvert.SerializeObject(scores, Formatting.Indented));
+            _context.Scores.Remove(scoreToRemove);
+            _context.SaveChanges();
+
             return true;
         }
 
         public Score AddScore(ScoreDto dto)
         {
-            var scores = GetAllScores();
-
-            int newId = scores.Count > 0 ? scores.Max(s => s.Id) + 1 : 1;
+            int newId = _context.Scores.Any() ? _context.Scores.Max(s => s.Id) + 1 : 1;
 
             var score = new Score
             {
                 Id = newId,
-                PlayerName = dto.PlayerName ?? "Unknown Player", // Garante que PlayerName não seja nulo
+                PlayerName = dto.PlayerName ?? "Unknown Player",
                 Points = dto.Points,
                 CreatedAt = DateTime.UtcNow
             };
 
-            scores.Add(score);
-            File.WriteAllText(_filePath, JsonConvert.SerializeObject(scores, Formatting.Indented));
+            _context.Scores.Add(score);
+            _context.SaveChanges();
 
             return score;
         }
 
         public List<PlayerRankingDto> GetRanking()
         {
-            var scores = GetAllScores();
-            var ranking = scores
+            var ranking = _context.Scores
                 .GroupBy(s => s.PlayerName)
                 .Select(g => new PlayerRankingDto
                 {
@@ -75,26 +77,22 @@ namespace Backend.Services.Concretes
 
         public int GetTotalScoreByPlayer(string playerName)
         {
-            var scores = GetAllScores();
-            return scores
+            return _context.Scores
                 .Where(s => s.PlayerName.Equals(playerName, StringComparison.OrdinalIgnoreCase))
                 .Sum(s => s.Points);
         }
 
         public PlayerStatisticsDto GetPlayerStatistics(string playerName)
         {
-            var playerScores = GetAllScores()
+            var playerScores = _context.Scores
                 .Where(s => s.PlayerName.Equals(playerName, StringComparison.OrdinalIgnoreCase))
                 .OrderBy(s => s.CreatedAt)
                 .ToList();
 
-            // Filtra apenas as pontuações de jogos reais (pontos > 0) para as estatísticas
             var relevantScores = playerScores.Where(s => s.Points > 0).ToList();
 
             if (!relevantScores.Any())
             {
-                // Se o jogador só tem pontuações de 0 pontos ou nenhuma pontuação,
-                // as estatísticas devem refletir isso.
                 return new PlayerStatisticsDto
                 {
                     PlayerName = playerName,
@@ -116,7 +114,7 @@ namespace Backend.Services.Concretes
             int currentHighest = 0;
             bool firstScoreProcessed = false;
 
-            foreach (var score in relevantScores) // Itera apenas sobre as pontuações relevantes
+            foreach (var score in relevantScores)
             {
                 if (!firstScoreProcessed)
                 {
@@ -130,8 +128,8 @@ namespace Backend.Services.Concretes
                 }
             }
 
-            DateTime firstGameDate = relevantScores.Min(s => s.CreatedAt); // Usa relevantScores
-            DateTime lastGameDate = relevantScores.Max(s => s.CreatedAt);   // Usa relevantScores
+            DateTime firstGameDate = relevantScores.Min(s => s.CreatedAt);
+            DateTime lastGameDate = relevantScores.Max(s => s.CreatedAt);
             TimeSpan timeSpan = lastGameDate - firstGameDate;
 
             string timePlaying = FormatTimeSpan(timeSpan);
@@ -151,17 +149,11 @@ namespace Backend.Services.Concretes
         private string FormatTimeSpan(TimeSpan ts)
         {
             if (ts.TotalDays >= 1)
-            {
-                return $"{ts.Days} dias, {ts.Hours} horas";
-            }
+                return $"{ts.Days} days, {ts.Hours} hours";
             else if (ts.TotalHours >= 1)
-            {
-                return $"{ts.Hours} horas, {ts.Minutes} minutos";
-            }
+                return $"{ts.Hours} hours, {ts.Minutes} minutes";
             else
-            {
-                return $"{ts.Minutes} minutos, {ts.Seconds} segundos";
-            }
+                return $"{ts.Minutes} minutes, {ts.Seconds} seconds";
         }
     }
 }
