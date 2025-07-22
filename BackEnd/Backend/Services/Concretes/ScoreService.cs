@@ -3,15 +3,13 @@ using Backend.Services.Abstracts;
 using Backend.Models;
 using Backend.DTO_s;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System;
 
 namespace Backend.Services.Concretes
 {
     public class ScoreService : IScoreService
     {
-        private readonly string _filePath = "Data/score-data.json";
+        private readonly AppDbContext _context;
 
         public ScoreService()
         {
