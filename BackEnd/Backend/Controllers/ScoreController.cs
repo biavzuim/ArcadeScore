@@ -1,32 +1,34 @@
 using Backend.DTO_s; 
 using Backend.Services.Abstracts;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc; 
 using System;
 
 namespace Backend.Controllers
 {
-    [ApiController]
+    [ApiController] 
     [Route("api/[controller]")]
-    public class ScoreController : ControllerBase
+    public class ScoreController : ControllerBase 
     {
-        private readonly IScoreService _scoreService;
+        private readonly IScoreService _scoreService; 
+        public ScoreController(IScoreService scoreService) 
 
-        public ScoreController(IScoreService scoreService)
         {
-            _scoreService = scoreService;
+            _scoreService = scoreService; 
         }
 
-        [HttpGet]
-        public IActionResult GetScores()
+        [HttpGet] 
+        public IActionResult GetScores() 
         {
             return Ok(_scoreService.GetAllScores());
         }
 
-        [HttpPost]
-        public IActionResult AddScore([FromBody] ScoreDto dto)
+        [HttpPost]//*responde a uma requisição Post
+        public IActionResult AddScore([FromBody] ScoreDto dto) 
         {
-            var result = _scoreService.AddScore(dto);
+            var result = _scoreService.AddScore(dto); 
+
             return Created("", result);
+           
         }
 
         [HttpDelete("{id}")]
